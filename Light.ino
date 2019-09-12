@@ -1,7 +1,7 @@
 /*
  * DATE：201903
  * ID：NIT_Hm0s
- * 用ESP81266内置网页控制舵机转动
+ * ESP81266内置网页控制舵机转动
  * 舵机接D4引脚
 */
 #include <ESP8266WiFi.h>
@@ -20,22 +20,28 @@ const char* ssid = STASSID;
 const char* password = STAPSK;
 
 ESP8266WebServer server(80);
-
+/*内置网站代码*/
 String html = "<!DOCTYPE html><html lang=\"en\"><head><meta charest=\"UTF-8\"><title>Document</title></head><body><a href=\"./pin?light=on\"><input type=\"button\" value=\"&#x5F00;&#x706F;\"></a><a href=\"./pin?light=off\"><input type=\"button\" value=\"&#x5173;&#x706F;\"></a></body></html>";
 
+/*
+舵机控制代码
+点击on
+开发板的蓝色LED亮起
+舵机转45度角
+*/
 void pin(){
   if(server.arg("light")=="on"){
      digitalWrite(D4, LOW);
      server.send(200, "text/html", html);
-     myservo.write(45);// tell servo to go to position
+     myservo.write(45);// 舵机转到45度位置
      delay(1000); 
-     myservo.write(90);  
+     myservo.write(90);//舵机复位  
     }else if(server.arg("light")=="off"){
       digitalWrite(D4, HIGH);
       server.send(200, "text/html", html);      
-      myservo.write(135);// tell servo to go to position
+      myservo.write(135);//舵机转到135度位置
       delay(1000); 
-      myservo.write(90);       
+      myservo.write(90);//舵机复位       
       }
   }
 
@@ -68,13 +74,13 @@ void setup(void) {
   pinMode(D4, OUTPUT);
   digitalWrite(led, 0);
   Serial.begin(115200);
-  WiFi.mode(WIFI_STA);
+  WiFi.mode(WIFI_STA);//WIFI模式设置
   WiFi.begin(ssid, password);
   Serial.println("");
-  myservo.attach(D4);
+  myservo.attach(D4);//舵机信号输出口
 
 
-  // Wait for connection
+  // Wait for connection等待连接，输出一连串的点
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
